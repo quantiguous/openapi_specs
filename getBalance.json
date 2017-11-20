@@ -1,0 +1,180 @@
+openapi: 3.0.0
+info:
+  title: fundsTransferByCustomerService2
+  description: ''
+  termsOfService: ''
+  contact:
+    name: Quantiguous Solutions
+    url: 'http://apibanking.com'
+    email: hello@quantiguous.com
+  license:
+    name: Commercial
+    url: 'http://apibanking.com'
+  version: '1.0'
+  x-targetNamespace: 'http://www.quantiguous.com/services'
+servers:
+  - url: 'https://ditto.quantiguous.com/fundsTransferByCustomerService2'
+    description: fundsTransferByCustomerService2HttpPort
+paths:
+  /:
+    summary: getBalance
+    post:
+      summary: getBalance
+      operationId: getBalance
+      parameters:
+        - in: header
+          name: SOAPAction
+          schema:
+            type: string
+            enum:
+              - getBalance
+          required: true
+      requestBody:
+        description: getBalanceRequest
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                getBalance:
+                  $ref: '#/components/schemas/getBalance'
+          application/soap+xml:
+            schema:
+              type: object
+              properties:
+                Header:
+                  type: object
+                  xml:
+                    prefix: soap
+                Body:
+                  type: object
+                  properties:
+                    getBalance:
+                      $ref: '#/components/schemas/getBalance'
+                  xml:
+                    prefix: soap
+              xml:
+                namespace: 'http://www.w3.org/2003/05/soap-envelope'
+                prefix: soap
+                name: Envelope
+        required: true
+      responses:
+        '200':
+          description: getBalanceResponse
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  getBalanceResponse:
+                    $ref: '#/components/schemas/getBalanceResponse'
+        '500':
+          description: Fault
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Fault:
+                    $ref: '#/components/schemas/Fault'
+components:
+  schemas:
+    Fault:
+      type: object
+      properties:
+        Code:
+          type: object
+          properties:
+            Value:
+              type: string
+            Subcode:
+              type: object
+              properties:
+                Value:
+                  type: string
+        Reason:
+          type: object
+          properties:
+            Text:
+              type: string
+    getBalance:
+      type: object
+      properties:
+        version:
+          type: string
+          maxLength: 5
+          minLength: 1
+          xml:
+            namespace: 'http://www.quantiguous.com/services'
+            prefix: tns
+        appID:
+          type: string
+          maxLength: 20
+          minLength: 5
+          xml:
+            namespace: 'http://www.quantiguous.com/services'
+            prefix: tns
+        customerID:
+          type: string
+          description: The maximum length is 10 as per backend systems.
+          maxLength: 10
+          minLength: 1
+          xml:
+            namespace: 'http://www.quantiguous.com/services'
+            prefix: tns
+        AccountNumber:
+          type: string
+          description: ' The account to be debited for the funds transfer. The customer should have appropriate access (or ownership) to this account. '
+          maxLength: 20
+          minLength: 10
+          xml:
+            namespace: 'http://www.quantiguous.com/services'
+            prefix: tns
+      required:
+        - version
+        - appID
+        - customerID
+        - AccountNumber
+      xml:
+        namespace: 'http://www.quantiguous.com/services'
+        prefix: tns
+    getBalanceResponse:
+      type: object
+      properties:
+        Version:
+          type: string
+          maxLength: 5
+          minLength: 1
+          xml:
+            namespace: 'http://www.quantiguous.com/services'
+            prefix: tns
+        accountCurrencyCode:
+          type: string
+          description: ' The currency of the funding account. '
+          enum:
+            - INR
+          xml:
+            namespace: 'http://www.quantiguous.com/services'
+            prefix: tns
+        accountBalanceAmount:
+          type: number
+          description: ' The balance in the funding account. This is represented in the account currency. '
+          format: float
+          xml:
+            namespace: 'http://www.quantiguous.com/services'
+            prefix: tns
+        lowBalanceAlert:
+          type: boolean
+          description: ' A low balance threshold can be configured for the partners, If the balance in the drawing account drops below this threshold, alerts are sent, to give advance notice to the partner. This is important transactions are rejected the drawing account is not sufficiently funded. '
+          xml:
+            namespace: 'http://www.quantiguous.com/services'
+            prefix: tns
+      required:
+        - Version
+        - accountCurrencyCode
+        - accountBalanceAmount
+        - lowBalanceAlert
+      xml:
+        namespace: 'http://www.quantiguous.com/services'
+        prefix: tns
+
